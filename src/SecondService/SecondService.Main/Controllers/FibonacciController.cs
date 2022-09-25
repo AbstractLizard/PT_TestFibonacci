@@ -5,6 +5,9 @@
     using Microsoft.AspNetCore.Mvc;
     using Services;
 
+    /// <summary>
+    /// Контроллер инициализации и запуска
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class FibonacciController : ControllerBase

@@ -20,6 +20,8 @@
 
             mqHandler.Start();
             
+            var config = Startup.ServiceProvider.ResolveService<IConfigProvider>();
+            
             while(true)
             {
                 Console.WriteLine("Введите число потоков:");
@@ -31,7 +33,6 @@
                 }
                 else
                 {
-                    var config = Startup.ServiceProvider.ResolveService<IConfigProvider>();
                     var res = Startup.ServiceProvider.ResolveService<ISenderService>().Send(config.SecondServiceStartURL, numThread);
 
                     res.Wait();
@@ -41,8 +42,6 @@
             }
             
             Console.WriteLine("Старт расчета, для осстановки нажмите ESC");
-
-            
 
             for (int i = 0; i < numThread; i++)
             {
@@ -70,6 +69,7 @@
             }
             
             handlers.Clear();
+            Startup.ServiceProvider.ResolveService<ISenderService>().Send<object>(config.SecondServiceStopURL, null);
         }
     }
 }

@@ -12,6 +12,7 @@ namespace SecondService.Main
     using Utils;
     using Utils.Interface;
 
+    /// <summary> Класс инициализации сервиса </summary>
     public class Startup
     {
         public Startup(IConfiguration configuration)
