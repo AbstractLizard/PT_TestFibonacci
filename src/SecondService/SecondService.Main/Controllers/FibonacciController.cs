@@ -1,9 +1,9 @@
 ﻿namespace SecondService.Main.Controllers
 {
     using System.Threading.Tasks;
-    using Message;
+    using Common.DTO;
+    using Common.Interface;
     using Microsoft.AspNetCore.Mvc;
-    using Services;
 
     /// <summary>
     /// Контроллер инициализации и запуска
@@ -12,37 +12,39 @@
     [Route("[controller]")]
     public class FibonacciController : ControllerBase
     {
-        private readonly IRequestHandler _requestHandler;
-        private readonly IMQHandler<MessageDto> _mqHandler;
+         private readonly IProcessCalculateHandler _processCalculateHandler;
+         private readonly IPublishDataService _publishDataService;
         
-        public FibonacciController(IRequestHandler requestHandler, IMQHandler<MessageDto> mqHandler)
+        public FibonacciController(IProcessCalculateHandler processCalculateHandler, 
+            IPublishDataService publishDataService)
         {
-            _requestHandler = requestHandler;
-            _mqHandler = mqHandler;
+            _processCalculateHandler = processCalculateHandler;
+            _publishDataService = publishDataService;
+
         }
 
         [Route("Start")]
         [HttpPost]
-        public async Task<ActionResult> Start([FromBody]int countThread)
+        public Task<ActionResult> Start([FromBody]int countThread)
         {
-            _requestHandler.StartCalculate(countThread);
+            _processCalculateHandler.InitProcess(countThread);
 
-            return Ok();
+            return Task.FromResult<ActionResult>(Ok());
         }
         
         [Route("Message")]
         [HttpPost]
         public async Task<ActionResult> Message(MessageDto msg)
         {
-           _requestHandler.HandleMsg(msg);
-           return Ok();
+            _processCalculateHandler.HandleMsg(msg);
+            return Ok();
         }
         
         [Route("Stop")]
         [HttpPost]
         public async Task<ActionResult> Stop()
         {
-            _requestHandler.StopCalculate();
+            _processCalculateHandler.Stop();
             return Ok();
         }
         
@@ -50,7 +52,7 @@
         [HttpPost]
         public async Task<ActionResult> TestMessage(MessageDto msg)
         {
-            _mqHandler.Publish(msg);
+            await _publishDataService.Publish(msg);
             return Ok();
         }
     }

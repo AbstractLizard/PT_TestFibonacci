@@ -1,7 +1,6 @@
 namespace FirstService.Services
 {
     using System.Collections.Concurrent;
-    using Message;
 
     /// <summary> Обработчик очереди </summary>
     public interface IMQHandler
@@ -15,8 +14,5 @@ namespace FirstService.Services
         /// Запустить чтение из очереди
         /// </summary>
         void Stop();
-        
-        /// <summary> Получить коллекцию сообщений </summary>
-        BlockingCollection<MessageDto> GetBlockingCollection();
     }
 }

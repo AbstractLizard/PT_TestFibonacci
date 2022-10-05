@@ -1,6 +1,7 @@
 namespace SecondService.Main
 {
-    using Message;
+    using Common.Implementation;
+    using Common.Interface;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -9,8 +10,6 @@ namespace SecondService.Main
     using Microsoft.OpenApi.Models;
     using Services;
     using Services.Implementation;
-    using Utils;
-    using Utils.Interface;
 
     /// <summary> Класс инициализации сервиса </summary>
     public class Startup
@@ -29,13 +28,10 @@ namespace SecondService.Main
             
             var configProvider = new ConfigProvider();
             services.AddSingleton<IConfigProvider>(configProvider);
-            services.AddTransient<ICalculateFibService, CalculateFibService>();
-            services.AddTransient<IProcessCalculateHandler, ProcessCalculateHandler>();
-
             services.RegisterEasyNetQ(configProvider.RabbitMQConnString);
-            services.AddSingleton<IMQHandler<MessageDto>, RabbitMQHandler<MessageDto>>();
-            services.AddSingleton<IRequestHandler, RequestHandler>();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "SecondService.Main", Version = "v1"}); });
+            services.AddSingleton<IProcessCalculateHandler, ProcessCalculateHandler>();
+            services.AddSingleton<IPublishDataService, PublishDataService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

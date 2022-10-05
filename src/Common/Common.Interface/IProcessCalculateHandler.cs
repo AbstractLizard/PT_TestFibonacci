@@ -1,13 +1,15 @@
-namespace FirstService.Services
+namespace Common.Interface
 {
-    using System.Collections.Concurrent;
-    using Message;
+    using DTO;
 
     /// <summary> Обработчик процесса расчета </summary>
     public interface IProcessCalculateHandler
     {
         /// <summary> Запустить процесс расчета </summary>
-        void StartProcess(BlockingCollection<MessageDto> collection);
+        void InitProcess(int count);
+        
+        /// <summary> Обработать получение сообщения </summary>
+        void HandleMsg(MessageDto msg);
         
         /// <summary> Завершить процесс расчета </summary>
         void Stop();

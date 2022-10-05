@@ -1,4 +1,4 @@
-namespace Utils
+namespace Common.Utils
 {
     using System;
 
@@ -7,6 +7,9 @@ namespace Utils
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Получить сервис из контейнера
+        /// </summary>
         public static T ResolveService<T>(this IServiceProvider serviceCollection)
         {
             var service = serviceCollection.GetService(typeof(T));

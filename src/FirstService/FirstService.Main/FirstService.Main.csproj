@@ -24,7 +24,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Utils\Utils.csproj" />
+      <ProjectReference Include="..\..\Common\Common.Implementation\Common.Implementation.csproj" />
+      <ProjectReference Include="..\..\Common\Common.Interface\Common.Interface.csproj" />
+      <ProjectReference Include="..\..\Common\Common.Utils\Common.Utils.csproj" />
       <ProjectReference Include="..\FirstService.Services.Implementation\FirstService.Services.Implementation.csproj" />
       <ProjectReference Include="..\FirstService.Services\FirstService.Services.csproj" />
     </ItemGroup>

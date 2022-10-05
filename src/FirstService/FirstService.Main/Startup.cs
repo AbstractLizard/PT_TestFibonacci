@@ -1,11 +1,11 @@
 namespace FirstService.Main
 {
     using System;
+    using Common.Implementation;
+    using Common.Interface;
     using Microsoft.Extensions.DependencyInjection;
     using Services;
     using Services.Implementation;
-    using Utils;
-    using Utils.Interface;
 
     /// <summary> Класс инициализации сервиса </summary>
     public static class Startup
@@ -24,8 +24,8 @@ namespace FirstService.Main
                 c.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             
-            ServiceCollection.AddTransient<ICalculateFibService, CalculateFibService>();
-            ServiceCollection.AddTransient<IProcessCalculateHandler, ProcessCalculateHandler>();
+            ServiceCollection.AddSingleton<IProcessCalculateHandler, ProcessCalculateHandler>();
+            ServiceCollection.AddSingleton<IPublishDataService, PublishDataService>();
 
             ServiceCollection.RegisterEasyNetQ(configProvider.RabbitMQConnString);
             ServiceCollection.AddSingleton<IMQHandler, RabbitMQHandler>();

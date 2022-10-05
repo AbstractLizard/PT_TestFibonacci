@@ -1,9 +1,10 @@
 ﻿namespace FirstService.Main
 {
     using System;
-    using System.Collections.Generic;
+    using Common.DTO;
+    using Common.Interface;
+    using Common.Utils;
     using Services;
-    using Utils;
 
     class Program
     {
@@ -12,10 +13,9 @@
             Startup.InitializeApplicationContext();
             
             Console.WriteLine("Good day!");
-            int numThread;
-
-            var handlers = new List<IProcessCalculateHandler>();
-
+            
+            int countCalc;
+            
             var mqHandler = Startup.ServiceProvider.ResolveService<IMQHandler>();
 
             mqHandler.Start();
@@ -25,15 +25,15 @@
             while(true)
             {
                 Console.WriteLine("Введите число потоков:");
-                var tryParseNumThread = int.TryParse(Console.ReadLine(), out numThread);
+                var tryParseNumThread = int.TryParse(Console.ReadLine(), out countCalc);
 
-                if (!tryParseNumThread || numThread <= 0)
+                if (!tryParseNumThread || countCalc <= 0)
                 {
                     Console.Write("Ошибка ввода");
                 }
                 else
                 {
-                    var res = Startup.ServiceProvider.ResolveService<ISenderService>().Send(config.SecondServiceStartURL, numThread);
+                    var res = Startup.ServiceProvider.ResolveService<ISenderService>().Send(config.SecondServiceStartURL, countCalc);
 
                     res.Wait();
                     Console.Write($"{res.Result}");
@@ -43,11 +43,13 @@
             
             Console.WriteLine("Старт расчета, для осстановки нажмите ESC");
 
-            for (int i = 0; i < numThread; i++)
+            var processCalculateHandler = Startup.ServiceProvider.ResolveService<IProcessCalculateHandler>(); 
+            processCalculateHandler.InitProcess(countCalc);
+
+            for (int i = 0; i < countCalc; i++)
             {
-                var processCalculateHandler = Startup.ServiceProvider.ResolveService<IProcessCalculateHandler>(); 
-                processCalculateHandler.StartProcess(mqHandler.GetBlockingCollection());
-                handlers.Add(processCalculateHandler);
+                var startMsg = new MessageDto {Id = Guid.NewGuid(), FibValue = 0};
+                processCalculateHandler.HandleMsg(startMsg);
             }
 
             while (true)
@@ -61,15 +63,12 @@
             
             Console.WriteLine("Остановка расчетов");
             
-            mqHandler.Stop();
-
-            foreach (var handler in handlers)
-            {
-                handler.Stop();
-            }
+            var resStop = Startup.ServiceProvider.ResolveService<ISenderService>().Send<object>(config.SecondServiceStopURL, null);
+            resStop.Wait();
+            Console.Write($"{resStop.Result}");
             
-            handlers.Clear();
-            Startup.ServiceProvider.ResolveService<ISenderService>().Send<object>(config.SecondServiceStopURL, null);
+            mqHandler.Stop();
+            processCalculateHandler.Stop();
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace Message
+namespace Common.DTO
 {
     using System;
 
@@ -15,6 +15,6 @@ namespace Message
         /// <summary>
         /// Текущее значение числа Фиббоначи
         /// </summary>
-        public long FibValue { get; init; }
+        public long FibValue { get; set; }
     }
 }
