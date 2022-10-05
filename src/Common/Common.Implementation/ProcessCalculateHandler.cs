@@ -41,6 +41,10 @@ namespace Common.Implementation
 
         private void InnerHandleMsg(MessageDto msg)
         {
+            if (dataCash == null)
+            {
+                throw new Exception("Service is not start");
+            }
             if (dataCash.TryGetValue(msg.Id, out var dto))
             {
                 lock (dto)
